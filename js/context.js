@@ -6,9 +6,11 @@
     persistedTodo = [];
 
   chrome.storage.local.get('todoData',function(result){
-    persistedTodo = result.todoData; 
-    for(var i = 0; i< persistedTodo.length; i++){
-      addItem(persistedTodo[i]);
+    if(result.todoData) {
+      persistedTodo = result.todoData; 
+      for(var i = 0; i< persistedTodo.length; i++){
+        addItem(persistedTodo[i]);
+      }  
     }
   });
 

@@ -1,11 +1,40 @@
+
+
+
 #title-bar {
   -webkit-app-region: drag;
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  padding: 5px;
+  padding: 6px;
   background-color: #333;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+html,
+body {
+    font-family: 'Roboto', sans-serif;
+    height: 100%;
+    margin: 0;
+}
+
+ul{
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-weight: lighter;
+  box-sizing: border-box;
+}
+
+p{
+  margin: 0;
 }
 
 
@@ -14,6 +43,26 @@
 
 .dark {
   background-color: #333;
+}
+
+.dark .todo-item {
+  border: none;
+}
+
+.dark .todo-app {
+  background-color: transparent;
+}
+
+.dark .todo-app .edit-btn {
+  display: none;
+}
+
+.dark .todo-app .close-btn {
+  color: lightgray;
+}
+
+.dark .todo-header {
+  background-color: #222;
 }
 
 /**/
@@ -50,6 +99,7 @@ p{
   margin: 0 auto;  
   padding: 0 50px;
   box-sizing: border-box;
+  transition: all 300ms ease;
   
 }
 
@@ -59,7 +109,7 @@ p{
   text-align: center;
   padding-top: 10px;
   box-sizing: border-box;
-  font-size: 50px;
+  font-size: 30px;
   margin-top: 30px;
   font-weight: lighter;
 }
@@ -67,7 +117,7 @@ p{
 
 .credits-text{
   text-align: center;
-  font-size: 13px;
+  font-size: 10px;
   color: lightgray;
   font-weight: lighter;
 }
@@ -76,11 +126,13 @@ p{
 /*TODOLIST STYLE*/
 
 .todo-app{
-  max-width: 400px;
-  background-color: white;
+  position: absolute;
+  top: 120px;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
   margin: 0 auto;
-  /*box-shadow: 1px 1px 200px -30px gray;*/
-  margin-top: 15px;
 }
 
 .todo-header{
@@ -109,10 +161,14 @@ p{
 
 
 .todo-list{
-  max-height: 490px;
-  overflow: auto;
   margin: 0;
   padding: 0;
+  position: absolute;
+  bottom: 0;
+  top: 50px;
+  left: 0;
+  right: 0;
+  overflow: auto;
 }
 
 

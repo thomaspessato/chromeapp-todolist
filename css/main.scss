@@ -1,0 +1,177 @@
+
+@import "_basicelements.scss";
+
+#title-bar {
+  -webkit-app-region: drag;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 5px;
+  background-color: #333;
+}
+
+
+
+
+/*THEMES*/
+
+.dark {
+  background-color: #333;
+}
+
+.dark  {}
+
+/**/
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+html,
+body {
+    font-family: 'Roboto', sans-serif;
+    height: 100%;
+    margin: 0;
+}
+
+ul{
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-weight: lighter;
+  box-sizing: border-box;
+}
+
+p{
+  margin: 0;
+}
+
+.wrapper{
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;  
+  padding: 0 50px;
+  box-sizing: border-box;
+  
+}
+
+.title{
+  margin: 0 auto;
+  color: gray;
+  text-align: center;
+  padding-top: 10px;
+  box-sizing: border-box;
+  font-size: 50px;
+  margin-top: 30px;
+  font-weight: lighter;
+}
+
+
+.credits-text{
+  text-align: center;
+  font-size: 13px;
+  color: lightgray;
+  font-weight: lighter;
+}
+
+
+/*TODOLIST STYLE*/
+
+.todo-app{
+  max-width: 400px;
+  background-color: white;
+  margin: 0 auto;
+  /*box-shadow: 1px 1px 200px -30px gray;*/
+  margin-top: 15px;
+}
+
+.todo-header{
+  height: 50px;
+  width: 100%;
+  background-color: white;
+  box-shadow: inset 1px -1px 10px -3px black;
+}
+
+
+.todo-input{
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  color: gray;
+  font-size: 15px;
+  font-weight: lighter;
+  padding: 0 0 0 10px;
+  box-sizing: border-box;
+  border: none;
+  background: none;
+  
+}
+
+
+
+.todo-list{
+  max-height: 490px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+}
+
+
+.todo-item{
+  box-sizing: border-box;
+  padding: 20px;
+  font-size: 15px;
+  font-weight: 100;
+  color: gray;
+  border-bottom: 1px solid #f1f1f1;
+  border-left: 1px solid #f1f1f1;
+  border-right: 1px solid #f1f1f1;
+  list-style-type: none;
+}
+
+.close-btn{
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+  font-size: 22px;
+  float: right;
+  color: black;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 100%;
+  margin: 0;
+  transition: all 300ms ease;
+  padding: 0;
+}
+
+.close-btn:hover{
+  box-shadow: 1px 1px 10px -3px black;
+}
+
+
+.edit-btn{
+  background-image: url('https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/pencil.png');
+  height: 30px;
+  width: 30px;
+  background-color: white;
+  border-radius: 100%;
+  border: none;
+  cursor: pointer;
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: 7px;
+  float: right;
+  margin-right: 5px;
+}
+
+.edit-btn:hover{
+  box-shadow: 1px 1px 10px -5px black;
+}
+
+
+
