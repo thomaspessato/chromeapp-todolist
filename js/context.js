@@ -1,9 +1,11 @@
 (function(){
+
   var todoInput = document.getElementById("todo-input"),
     container = document.getElementById("content"),
     todoList = document.getElementById("todo-list"),
     themeBtn = document.getElementById("theme-btn"),
-    persistedTodo = [];
+    persistedTodo = [],
+    currentTheme;
 
   chrome.storage.local.get('todoData',function(result){
     if(result.todoData) {
@@ -11,13 +13,22 @@
       for(var i = 0; i< persistedTodo.length; i++){
         addItem(persistedTodo[i]);
       }  
+    };
+  });
+
+  chrome.storage.local.get('theme',function(result){
+    if(result) {
+      console.log(result);
+      currentTheme = result.theme;
+      setTheme(result.theme);
+      themeBtn.innerHTML = "Theme: "+currentTheme;
     }
   });
 
   todoInput.onkeypress = function(e){
     
     if(!e) e = window.event;
-    
+
     if(e.keyCode != "13"){  
       return;
     }
@@ -29,9 +40,7 @@
     addItem(todoInput.value);
 
     persistedTodo.push(todoInput.value);
-    chrome.storage.local.set({'todoData':persistedTodo},function () {
-      console.log("New data saved");
-    });
+    chrome.storage.local.set({"todoData":persistedTodo});
 
     todoInput.value = "";
     
@@ -65,19 +74,28 @@
     }
 
     if(evt.target.id == "theme-btn") {
-      if(container.classList.contains("light")) {
-        container.classList.remove("light");  
-        container.classList.add("dark"); 
-        themeBtn.innerHTML = "Theme: dark";
-      } else {
-        container.classList.remove("dark");  
-        container.classList.add("light");
-        themeBtn.innerHTML = "Theme: light";
-      }
-      
+      changeTheme();
     }
   },false);
 
+  function setTheme(theme){
+    container.classList.add(theme);
+  }
+
+  function changeTheme(){
+
+    if(container.classList.contains("light")) {
+      currentTheme = "dark";
+      container.classList.remove("light");
+    } else {
+      currentTheme = "light";
+      container.classList.remove("dark");
+    }
+
+    themeBtn.innerHTML = "Theme: "+currentTheme;
+    container.classList.add(currentTheme);
+    chrome.storage.local.set({"theme":currentTheme}); 
+  }
 
   todoList.addEventListener("click",function(evt){
     var deletedItem;
@@ -88,9 +106,7 @@
 
     persistedTodo.splice(deletedItem,1);
     evt.target.parentNode.parentNode.removeChild(evt.target.parentNode);
-    chrome.storage.local.set({'todoData':persistedTodo},function () {
-      console.log("New data saved");
-    });
-     
+    chrome.storage.local.set({"todoData":persistedTodo});
+    
   });
 })();
