@@ -5,7 +5,9 @@
     container: document.getElementById("content"),
     todoList: document.getElementById("todo-list"),
     themeBtn: document.getElementById("theme-btn"),
-    checkedCounter: document.getElementById("checked-counter")
+    checkedCounter: document.getElementById("checked-counter"),
+    tabList: document.getElementById("tab-list"),
+    tabInput: document.getElementById("tab-input"),
   },
     persistedTodo = [],
     currentTheme,
@@ -47,9 +49,59 @@
     chrome.storage.local.set({"todoData":persistedTodo});
 
     DOM.todoInput.value = "";
-    
   };
 
+  DOM.tabInput.onkeypress = function(e) {
+    if(!e) e = window.event;
+
+    if(e.keyCode != "13"){  
+      return;
+    }
+    
+    if(DOM.tabInput.value === ""){
+      return;
+    }
+
+    addTab(DOM.tabInput.value);
+
+    // persistedTodo.push(DOM.todoInput.value);
+    // chrome.storage.local.set({"todoData":persistedTodo});
+
+    DOM.tabInput.value = "";
+  }
+
+
+ 
+
+  window.addEventListener("click", function(evt){
+    if(evt.target.id == "close-btn") {
+      closeWindow();
+    }
+
+    if(evt.target.id == "theme-btn") {
+      changeTheme();
+    }
+  },false);
+
+  DOM.todoList.addEventListener("click", function(evt){
+    if(evt.target.classList.contains("checked")){
+      evt.target.classList.remove("checked");
+      checkedItens--;
+      DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
+      
+    } else if (evt.target.classList.contains("todo-text")) {
+      evt.target.classList.add("checked");
+      checkedItens++;
+      DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
+    }
+  });
+
+  function addTab(data) {
+    var newOption = document.createElement("option");
+    newOption.innerHTML = data;
+    console.log(data);
+    DOM.tabList.appendChild(newOption);
+  }
 
   function addItem(data){
     var li = document.createElement("li"),
@@ -79,38 +131,13 @@
     p.innerHTML = data;
     refChild = DOM.todoList.firstChild;
     DOM.todoList.insertBefore(li,refChild);
-
   }
-
-  window.addEventListener("click", function(evt){
-    if(evt.target.id == "close-btn") {
-      closeWindow();
-    }
-
-    if(evt.target.id == "theme-btn") {
-      changeTheme();
-    }
-  },false);
-
-  DOM.todoList.addEventListener("click", function(evt){
-    if(evt.target.classList.contains("checked")){
-      evt.target.classList.remove("checked");
-      checkedItens--;
-      DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
-      
-    } else if (evt.target.classList.contains("todo-text")) {
-      evt.target.classList.add("checked");
-      checkedItens++;
-      DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
-    }
-  });
 
   function setTheme(theme){
     DOM.container.classList.add(theme);
   }
 
   function changeTheme(){
-
     if(DOM.container.classList.contains("light")) {
       currentTheme = "dark";
       DOM.container.classList.remove("light");
@@ -118,7 +145,6 @@
       currentTheme = "light";
       DOM.container.classList.remove("dark");
     }
-
     DOM.themeBtn.innerHTML = "Theme: "+currentTheme;
     DOM.container.classList.add(currentTheme);
     chrome.storage.local.set({"theme":currentTheme}); 
@@ -136,4 +162,5 @@
     chrome.storage.local.set({"todoData":persistedTodo});
     
   });
+
 })();
