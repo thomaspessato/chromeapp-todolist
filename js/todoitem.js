@@ -1,4 +1,8 @@
-var TodoItem = function(description) {
-	this.description = description;
-	console.log("TodoItem created");
-}
+var TodoItem = function (item) {
+  this.item = item;
+  console.log(this.item);
+};
+
+//criar métodos
+//criar setters e getters necessários
+//criar escopo PRIVATE e PUBLIC
