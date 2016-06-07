@@ -9,43 +9,103 @@
     tabList: document.getElementById("tab-list"),
     tabInput: document.getElementById("tab-input"),
   },
-    persistedTodo = [],
+    persistedTodo = {},
     currentTheme,
-    checkedItens = 0;
+    checkedItens = 0,
+    currentTab;
 
-  chrome.storage.local.get('todoData',function(result){
-    if(result.todoData) {
-      persistedTodo = result.todoData; 
-      for(var i = 0; i< persistedTodo.length; i++){
-        addItem(persistedTodo[i]);
-      }  
-    };
-  });
+  getTabList();
+  getDataTheme();
 
-  chrome.storage.local.get('theme',function(result){
+
+  chrome.storage.local.get('persistedTab',function(result){
     if(result) {
-      console.log(result);
-      currentTheme = result.theme;
-      setTheme(result.theme);
-      DOM.themeBtn.innerHTML = "Theme: "+currentTheme;
+      currentTab = result.persistedTab;
+      console.log("HAS PERSISTED TAB");
+      DOM.tabList.value = currentTab;
+    } else {
+      currentTab = getCurrentTab();
     }
+    getDataList();
   });
+
+  function getTabList(){
+    var tabList = [];
+    chrome.storage.local.get('todoData',function(result){
+      for(var key in result.todoData){
+        if(key) {
+          addTab(key);
+        }
+      }
+    });
+  }
+
+  function getDataList(){
+    console.log("CALLING DATA LIST");
+    DOM.todoList.innerHTML = "";
+
+    chrome.storage.local.get('todoData',function(result){
+      if(result.todoData && result.todoData[currentTab]) {
+        persistedTodo[currentTab] = result.todoData[currentTab];
+
+        var itemList = result.todoData[currentTab].itemList;
+
+        if(itemList) {
+          for(var i = 0; i< itemList.length; i++){
+            addItem(itemList[i]);
+          }
+        }
+      } else {
+        persistedTodo[currentTab] = {};
+        persistedTodo[currentTab].itemList = [];  
+      }
+    });
+  }
+
+  
+
+  function getCurrentTab () {
+    return DOM.tabList.options[DOM.tabList.selectedIndex].value;
+  }
+
+  function getDataTheme(){
+      chrome.storage.local.get('theme',function(result){
+      if(result) {
+        console.log(result);
+        currentTheme = result.theme;
+        setTheme(result.theme);
+        DOM.themeBtn.innerHTML = "Theme: "+currentTheme;
+      }
+    });
+  }
+
+  
+
+  DOM.tabList.addEventListener("change",function(evt){
+    currentTab = evt.target.value;
+    console.log(DOM.todoList);
+    DOM.todoList.innerHTML = "";
+    
+    getDataList();
+
+  },false);
 
   DOM.todoInput.onkeypress = function(e){
+
+    currentTab = getCurrentTab();
     
     if(!e) e = window.event;
 
     if(e.keyCode != "13"){  
       return;
     }
-    
+
     if(DOM.todoInput.value === ""){
       return;
     }
 
     addItem(DOM.todoInput.value);
-
-    persistedTodo.push(DOM.todoInput.value);
+    persistedTodo[currentTab].itemList.push(DOM.todoInput.value);
     chrome.storage.local.set({"todoData":persistedTodo});
 
     DOM.todoInput.value = "";
@@ -71,10 +131,10 @@
   }
 
 
- 
-
   window.addEventListener("click", function(evt){
     if(evt.target.id == "close-btn") {
+      var persistedTab = getCurrentTab();
+      chrome.storage.local.set({"persistedTab":persistedTab});
       closeWindow();
     }
 
@@ -101,6 +161,8 @@
     newOption.innerHTML = data;
     console.log(data);
     DOM.tabList.appendChild(newOption);
+    persistedTodo[data] = {};
+    persistedTodo[data].itemList = [];
   }
 
   function addItem(data){
@@ -111,8 +173,6 @@
         editBtn = document.createElement("button"),
         refChild;
 
-
-
     closeBtn.className = "close-btn"; 
     closeBtn.innerHTML = "x";
     li.className = "todo-item";
@@ -121,7 +181,6 @@
     p.className = "todo-text";
 
     checkbox.setAttribute("type","checkbox");
-
 
     li.appendChild(checkbox);
     li.appendChild(editBtn);
@@ -155,12 +214,14 @@
     if(evt.target.innerHTML != "x"){
       return;
     }
-    deletedItem = persistedTodo.indexOf(evt.target.nextSibling.innerText);
+    deletedItem = persistedTodo[currentTab].itemList.indexOf(evt.target.nextSibling.innerText);
 
-    persistedTodo.splice(deletedItem,1);
+    persistedTodo[currentTab].itemList.splice(deletedItem,1);
     evt.target.parentNode.parentNode.removeChild(evt.target.parentNode);
     chrome.storage.local.set({"todoData":persistedTodo});
     
   });
+
+
 
 })();
