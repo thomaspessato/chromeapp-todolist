@@ -29,12 +29,21 @@
     getDataList();
   });
 
+
+  chrome.storage.local.get('todoData',function(result){
+    if(result.todoData) {
+      persistedTodo = result.todoData;
+    } 
+  });
+
   function getTabList(){
     var tabList = [];
     chrome.storage.local.get('todoData',function(result){
-      for(var key in result.todoData){
-        if(key) {
-          addTab(key);
+      if(result.todoData) {
+        for(var key in result.todoData){
+          if(key) {
+            addTab(key);
+          }
         }
       }
     });
