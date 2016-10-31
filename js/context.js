@@ -10,6 +10,7 @@
     tabInput: document.getElementById("tab-input"),
   },
     persistedTodo = {},
+    persistedTab = [],
     currentTheme,
     checkedItens = 0,
     currentTab;
@@ -17,32 +18,22 @@
   getTabList();
   getDataTheme();
 
-
-  chrome.storage.local.get('persistedTab',function(result){
-    if(result) {
-      currentTab = result.persistedTab;
-      console.log("HAS PERSISTED TAB");
-      DOM.tabList.value = currentTab;
-    } else {
-      currentTab = getCurrentTab();
-    }
-    getDataList();
-  });
-
-
-  chrome.storage.local.get('todoData',function(result){
-    if(result.todoData) {
-      persistedTodo = result.todoData;
-    } 
-  });
-
   function getTabList(){
     var tabList = [];
     chrome.storage.local.get('todoData',function(result){
       if(result.todoData) {
         for(var key in result.todoData){
           if(key) {
-            addTab(key);
+            showTab(key);
+            if(result.todoData[key].itemList) {
+              var itemList = result.todoData[key].itemList;
+              persistedTodo[key] = {
+                itemList: result.todoData[key].itemList
+              };
+            } 
+            for(var i = 0; i < itemList.length; i++) {
+              addItem(itemList[i]);
+            }
           }
         }
       }
@@ -55,10 +46,7 @@
 
     chrome.storage.local.get('todoData',function(result){
       if(result.todoData && result.todoData[currentTab]) {
-        persistedTodo[currentTab] = result.todoData[currentTab];
-
         var itemList = result.todoData[currentTab].itemList;
-
         if(itemList) {
           for(var i = 0; i< itemList.length; i++){
             addItem(itemList[i]);
@@ -70,8 +58,6 @@
       }
     });
   }
-
-  
 
   function getCurrentTab () {
     return DOM.tabList.options[DOM.tabList.selectedIndex].value;
@@ -88,8 +74,6 @@
     });
   }
 
-  
-
   DOM.tabList.addEventListener("change",function(evt){
     currentTab = evt.target.value;
     console.log(DOM.todoList);
@@ -100,9 +84,6 @@
   },false);
 
   DOM.todoInput.onkeypress = function(e){
-
-    currentTab = getCurrentTab();
-    
     if(!e) e = window.event;
 
     if(e.keyCode != "13"){  
@@ -113,12 +94,15 @@
       return;
     }
 
+    currentTab = getCurrentTab();
+
     addItem(DOM.todoInput.value);
     persistedTodo[currentTab].itemList.push(DOM.todoInput.value);
+    console.log(persistedTodo);
     chrome.storage.local.set({"todoData":persistedTodo});
-
     DOM.todoInput.value = "";
   };
+
 
   DOM.tabInput.onkeypress = function(e) {
     if(!e) e = window.event;
@@ -132,47 +116,59 @@
     }
 
     addTab(DOM.tabInput.value);
-
-    // persistedTodo.push(DOM.todoInput.value);
-    // chrome.storage.local.set({"todoData":persistedTodo});
-
+    chrome.storage.local.set({"todoData":persistedTodo});
     DOM.tabInput.value = "";
   }
 
 
   window.addEventListener("click", function(evt){
-    if(evt.target.id == "close-btn") {
-      var persistedTab = getCurrentTab();
-      chrome.storage.local.set({"persistedTab":persistedTab});
-      closeWindow();
-    }
-
-    if(evt.target.id == "theme-btn") {
-      changeTheme();
+    switch(evt.target.id) {
+      case "close-btn":
+        var persistedTab = getCurrentTab();
+        chrome.storage.local.set({"persistedTab":persistedTab});
+        closeWindow();
+        break;
+      case "minimize-btn":
+        chrome.app.window.current().minimize();
+        break;
+      case "theme-btn": 
+        changeTheme();
+      default:
+        break;
     }
   },false);
 
-  DOM.todoList.addEventListener("click", function(evt){
-    if(evt.target.classList.contains("checked")){
-      evt.target.classList.remove("checked");
-      checkedItens--;
-      DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
+  // DOM.todoList.addEventListener("click", function(evt){
+  //   if(evt.target.classList.contains("checked")){
+  //     evt.target.classList.remove("checked");
+  //     checkedItens--;
+  //     DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
       
-    } else if (evt.target.classList.contains("todo-text")) {
-      evt.target.classList.add("checked");
-      checkedItens++;
-      DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
-    }
-  });
+  //   } else if (evt.target.classList.contains("todo-text")) {
+  //     evt.target.classList.add("checked");
+  //     checkedItens++;
+  //     DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
+  //   }
+  // });
 
   function addTab(data) {
     var newOption = document.createElement("option");
+    persistedTab.push(data);
     newOption.innerHTML = data;
     console.log(data);
     DOM.tabList.appendChild(newOption);
     persistedTodo[data] = {};
     persistedTodo[data].itemList = [];
   }
+
+  function showTab(data) {
+    var newOption = document.createElement("option");
+    persistedTab.push(data);
+    newOption.innerHTML = data;
+    console.log(data);
+    DOM.tabList.appendChild(newOption);
+  }
+
 
   function addItem(data){
     var li = document.createElement("li"),
@@ -199,6 +195,9 @@
     p.innerHTML = data;
     refChild = DOM.todoList.firstChild;
     DOM.todoList.insertBefore(li,refChild);
+
+    
+
   }
 
   function setTheme(theme){
@@ -230,7 +229,5 @@
     chrome.storage.local.set({"todoData":persistedTodo});
     
   });
-
-
 
 })();

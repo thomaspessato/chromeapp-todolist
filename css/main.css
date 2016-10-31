@@ -85,6 +85,14 @@ p{
   background-color: #222;
 }
 
+.dark .todo-text.checked {
+  text-decoration: line-through;
+  color: #555;
+  background-color: #222;
+}
+
+
+
 /**/
 
 input:focus,
@@ -288,7 +296,7 @@ p{
 .todo-text.checked {
   text-decoration: line-through;
   color: #555;
-  background-color: #222;
+  background-color: #d7d7d7;
 }
 
 
