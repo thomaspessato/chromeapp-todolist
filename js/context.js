@@ -138,18 +138,18 @@
     }
   },false);
 
-  // DOM.todoList.addEventListener("click", function(evt){
-  //   if(evt.target.classList.contains("checked")){
-  //     evt.target.classList.remove("checked");
-  //     checkedItens--;
-  //     DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
+  DOM.todoList.addEventListener("click", function(evt){
+    if(evt.target.classList.contains("checked")){
+      evt.target.classList.remove("checked");
+      checkedItens--;
+      DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
       
-  //   } else if (evt.target.classList.contains("todo-text")) {
-  //     evt.target.classList.add("checked");
-  //     checkedItens++;
-  //     DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
-  //   }
-  // });
+    } else if (evt.target.classList.contains("todo-text")) {
+      evt.target.classList.add("checked");
+      checkedItens++;
+      DOM.checkedCounter.innerHTML = "Completed tasks: "+checkedItens;
+    }
+  });
 
   function addTab(data) {
     var newOption = document.createElement("option");
